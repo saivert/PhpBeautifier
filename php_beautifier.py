@@ -13,18 +13,17 @@ class PhpBeautifierCommand(sublime_plugin.TextCommand):
             return
 
         if self.view.is_dirty():
-            return sublime.status_message("Please save the file.")
+            return self.status("Please save the file.")
 
         FILE = self.view.file_name()
         if not FILE or not os.path.exists(FILE):
-            return self.status("File does not exist.")
+            return self.status("File {0} does not exist.".format(FILE))
 
         if not FILE[-3:] == 'php':
-            return self.status("File does not have php extension.")
+            return self.status("File {0} does not have php extension.".format(FILE))
 
         # Start doing stuff
         cmd = "php_beautifier"
-        cmd_windows = cmd + ".bat"
         indent = "-s4"
         filters = "ArrayNested() NewLines(before=switch:while:for:foreach:T_CLASS:return:break) Pear(add-header=false)"
 
@@ -32,10 +31,11 @@ class PhpBeautifierCommand(sublime_plugin.TextCommand):
         AllFileText = self.view.substr(allFile).encode('utf-8')
 
         if os.name == 'nt':
+            cmd_win = cmd + ".bat"
             startupinfo = subprocess.STARTUPINFO()
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             startupinfo.wShowWindow = subprocess.SW_HIDE
-            p = subprocess.Popen([cmd_windows, indent, "-l", filters, "-f", "-", "-o", "-"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupinfo)
+            p = subprocess.Popen([cmd_win, indent, "-l", filters, "-f", "-", "-o", "-"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupinfo)
         else:
             p = subprocess.Popen([cmd, indent, "-l", filters, "-f", "-", "-o", "-"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = p.communicate(AllFileText)
@@ -58,3 +58,6 @@ class PhpBeautifierCommand(sublime_plugin.TextCommand):
 
     def fixup(self, string):
         return re.sub(r'\r\n|\r', '\n', string.decode('utf-8'))
+
+    def status(self, string):
+        return sublime.status_message(string)
