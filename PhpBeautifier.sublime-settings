@@ -1,0 +1,9 @@
+{
+	"filters" : [
+			"ArrayNested()",
+			"NewLines(before=switch:while:for:foreach:T_CLASS:return:break)",
+			"Pear(add-header=false)"
+		],
+	"indent" : "-s4",
+	"extensions" : ["php"]
+}

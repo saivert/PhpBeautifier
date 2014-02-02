@@ -1,0 +1,47 @@
+[
+    {
+        "caption": "Edit",
+        "mnemonic": "n",
+        "id": "edit",
+        "children": 
+        [
+            {
+                "caption" : "Php: Format Code",
+                "command": "php_beautifier"
+            }
+        ]
+        },
+	{
+        "caption": "Preferences",
+        "mnemonic": "n",
+        "id": "preferences",
+        "children":
+        [
+            {
+                "caption": "Package Settings",
+                "mnemonic": "P",
+                "id": "package-settings",
+                "children":
+                [
+                    {
+                        "caption": "PhpBeautifier",
+                        "children":
+                        [
+                            {
+                                "command": "open_file",
+                                "args": {"file": "${packages}/PhpBeautifier/PhpBeautifier.sublime-settings"},
+                                "caption": "Settings – Default"
+                            },
+                            {
+                                "command": "open_file",
+                                "args": {"file": "${packages}/User/PhpBeautifier.sublime-settings"},
+                                "caption": "Settings – User"
+                            },
+                            { "caption": "-" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

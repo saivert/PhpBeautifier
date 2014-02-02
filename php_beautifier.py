@@ -7,7 +7,9 @@ import sublime_plugin
 
 
 class PhpBeautifierCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
+    def run(self, edit):        
+        # Load settings
+        settings = sublime.load_settings('PhpBeautifier.sublime-settings') 
         # Test environment
         if self.view.is_scratch():
             return
@@ -15,18 +17,23 @@ class PhpBeautifierCommand(sublime_plugin.TextCommand):
         if self.view.is_dirty():
             return self.status("Please save the file.")
 
+        # check if file exists.
         FILE = self.view.file_name()
         if not FILE or not os.path.exists(FILE):
             return self.status("File {0} does not exist.".format(FILE))
 
-        if not FILE[-3:] == 'php':
-            return self.status("File {0} does not have php extension.".format(FILE))
+        # check if extension is allowed.
+        fileName, fileExtension = os.path.splitext(FILE)        
+        if fileExtension[1:] not in settings.get('extensions'):
+            return self.status("File {0}{1} does not have a valid extension. Please edit your settings to allow this extension.".format(fileName, fileExtension))
 
         # Start doing stuff
         cmd = "php_beautifier"
-        indent = "-s4"
-        filters = "ArrayNested() NewLines(before=switch:while:for:foreach:T_CLASS:return:break) Pear(add-header=false)"
 
+        # Load indent and filters settings        
+        indent = settings.get('indent');
+        filters = ' '.join(settings.get('filters'));
+        
         allFile = sublime.Region(0, self.view.size())
         AllFileText = self.view.substr(allFile).encode('utf-8')
 
